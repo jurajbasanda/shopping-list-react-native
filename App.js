@@ -1,67 +1,44 @@
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
-
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import Header from './components/Header.js'
+import React, {useState} from 'react';
+import {StyleSheet, View, Text, FlatList, Alert} from 'react-native';
+import AddItem from './components/AddItem.js';
+import Header from './components/Header.js';
+import ListItem from './components/ListItem.js';
 
 const App = () => {
+ const newId = new Date().getUTCMilliseconds()
+  const [items, setItems] = useState([
+    {id: '123', text: 'Eggs'},
+    {id: '12', text: 'Milk'},
+    {id: '1234', text: 'Peperony'},
+    {id: '12345', text: 'Chicken'},
+  ]);
+  const deleteItem = (id) =>{
+    setItems(prevItem =>{
+      return prevItem.filter(item => item.id !== id)
+    });
+  }
+  const addItem = (text)=>{
+    if(!text){Alert.alert('Error','Please Enter An Item',{text:'Ok'})}
+    else{
+    setItems(prevItem=>{
+      return [{id:newId,text},...prevItem]
+    })}
+  }
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header title='Shopping List' />
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <View style={style.container}>
+    <Header title="Shopping List"></Header>
+    <AddItem addItem={addItem}></AddItem>
+      <FlatList
+        data={items}
+        renderItem={({item}) => <ListItem item={item} deleteItem={deleteItem}/>}
+      />
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+const style = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 60,
   },
 });
 
